@@ -49,8 +49,8 @@ python view_data.py
 
 ## Project Structure
 
--`server.py`: Main entry point for the web application.
--`demo_engine.py`: Core logic for scraping news sites.
--`sites.json`: Configuration file for target URLs.
--`demo_data.db`: SQLite database storing the news data.
--`templates/`: HTML templates for the web interface.
+- `server.py`: Main entry point for the web application.
+- `demo_engine.py`: Core logic for scraping news sites.
+- `sites.json`: Configuration file for target URLs.
+- `demo_data.db`: SQLite database storing the news data.
+- `templates/`: HTML templates for the web interface.
