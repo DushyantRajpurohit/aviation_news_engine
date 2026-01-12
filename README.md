@@ -24,12 +24,14 @@ pip install -r requirements.txt
 ## Usage
 
 1. **Run the Scraper**
+
 Fetch the latest news and update the database:
 ```bash
 python demo_engine.py
 ```
 
 2. **Start the Web Server**
+
 Launch the application to view the news:
 ```bash
 python server.py
@@ -37,10 +39,18 @@ python server.py
 Access the interface in your browser (typically at http://127.0.0.1:5000).
 
 3. **Utilities & Configuration**
-Add/Remove Sites: Edit `sites.json` to configure the target websites and scraping rules.
 
-Inspect Data: Use the utility script to check database contents:
+- **Add/Remove Sites**: Edit `sites.json` to configure the target websites and scraping rules.
+- **Inspect Data**: Use the utility script to check database contents:
 
 ```bash
 python view_data.py
 ```
+
+## Project Structure
+
+-`server.py`: Main entry point for the web application.
+-`demo_engine.py`: Core logic for scraping news sites.
+-`sites.json`: Configuration file for target URLs.
+-`demo_data.db`: SQLite database storing the news data.
+-`templates/`: HTML templates for the web interface.
