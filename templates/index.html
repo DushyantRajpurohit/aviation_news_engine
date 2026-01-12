@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aviation News Dashboard</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f9; padding: 20px; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        
+        /* CARD STYLE */
+        .card { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: transform 0.2s; }
+        .card:hover { transform: translateY(-5px); }
+        
+        .card-img { width: 100%; hiehgt: 180px; object-fit: cover; background-color: #ddd; }
+        .card-body { padding: 15px; }
+        
+        .tag { background-color: #007bff; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; text-transform: uppercase; font-weight: bold; }
+        .tag.Defence { background-color: #dc3545; } /* Red for Defence */
+        .tag.Commercial { background-color: #28a745; } /* Green for Commercial */
+        
+        h3 { font-size: 18px; margin: 10px 0; color: #333; }
+        p { color: #666; font-size: 14px; line-height: 1.5; }
+        .btn { display: inline-block; margin-top: 10px; text-decoration: none; color: #007bff; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>✈️ Aviation News Feed</h1>
+        <p>Live updates from the engine</p>
+    </div>
+
+    <div id="news-container" class="grid">
+        <p style="text-align:center; width:100%;">Loading news...</p>
+    </div>
+
+    <script>
+        // 1. Fetch data from our Python API
+        fetch('/api/news')
+            .then(response => response.json())
+            .then(data => {
+                const container = document.getElementById('news-container');
+                container.innerHTML = ''; // Clear "Loading..." text
+
+                // 2. Loop through every news item and create HTML
+                data.forEach(article => {
+                    // Handle missing images
+                    const imgSrc = article.image_url ? article.image_url : 'https://via.placeholder.com/300x180?text=No+Image';
+
+                    const html = `
+                        <div class="card">
+                            <img src="${imgSrc}" class="card-img" alt="News Image" onerror="this.src='https://via.placeholder.com/300x180?text=Error'">
+                            <div class="card-body">
+                                <span class="tag ${article.category}">${article.category}</span>
+                                <h3>${article.heading}</h3>
+                                <p>${article.body}</p>
+                                <a href="${article.original_url}" target="_blank" class="btn">Read Original &rarr;</a>
+                            </div>
+                        </div>
+                    `;
+                    container.innerHTML += html;
+                });
+            })
+            .catch(err => console.error('Error fetching news:', err));
+    </script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+from flask import Flask, jsonify, send_from_directory, render_template
+import sqlite3
+import os
+
+app = Flask(__name__)
+DB_NAME = "demo_data.db"
+IMAGE_FOLDER = "demo_images"
+
+def get_db_connection():
+    conn = sqlite3.connect(DB_NAME)
+    conn.row_factory = sqlite3.Row  # Allows accessing columns by name
+    return conn
+
+# 1. THE FRONTEND ROUTE
+# When you go to localhost:5000, this loads the HTML page
+@app.route('/')
+def home():
+    return render_template('index.html')
+
+# 2. THE API ROUTE
+# The frontend calls this to get the raw data (JSON)
+@app.route('/api/news')
+def api_news():
+    conn = get_db_connection()
+    # Get latest 50 articles
+    articles = conn.execute('SELECT * FROM articles ORDER BY date_added DESC LIMIT 50').fetchall()
+    conn.close()
+    
+    # Convert database rows to a clean list for the frontend
+    news_list = []
+    for row in articles:
+        # We need to extract just the filename for the image URL
+        # e.g., "demo_images/abc.jpg" -> "abc.jpg"
+        img_filename = os.path.basename(row['image_path']) if row['image_path'] else None
+        
+        news_list.append({
+            'id': row['id'],
+            'heading': row['heading'],
+            'category': row['category'],
+            'body': row['body_text'][:200] + "...", # Show only preview text
+            'image_url': f"/images/{img_filename}" if img_filename else None,
+            'original_url': row['url'],
+            'date': row['date_added']
+        })
+        
+    return jsonify(news_list)
+
+# 3. THE IMAGE ROUTE
+# This serves the actual image files from your local folder
+@app.route('/images/<filename>')
+def serve_image(filename):
+    return send_from_directory(IMAGE_FOLDER, filename)
+
+if __name__ == '__main__':
+    print("🚀 Server running at http://127.0.0.1:5000")
+    app.run(debug=True, port=5000)
